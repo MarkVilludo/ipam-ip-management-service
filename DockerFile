@@ -1,0 +1,36 @@
+FROM php:8.2-fpm-alpine
+
+RUN apk add --no-cache \
+    bash \
+    git \
+    curl \
+    libzip-dev \
+    oniguruma-dev \
+    mysql-client \
+    nginx
+
+RUN docker-php-ext-install \
+    pdo \
+    pdo_mysql \
+    mbstring \
+    zip
+
+COPY --from=composer:2 /usr/bin/composer /usr/bin/composer
+
+WORKDIR /var/www
+
+COPY . .
+
+RUN [ -f .env ] || cp .env.example .env
+
+RUN composer install --no-dev --optimize-autoloader
+
+RUN chown -R www-data:www-data /var/www
+
+COPY nginx-default.conf /etc/nginx/http.d/default.conf
+COPY start.sh /start.sh
+RUN chmod +x /start.sh
+
+EXPOSE 80
+
+CMD ["/start.sh"]

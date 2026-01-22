@@ -1,0 +1,29 @@
+services:
+  ip-app:
+    build: .
+    container_name: ipam-ip
+    ports:
+      - "9003:9000"
+    env_file:
+      - .env
+    depends_on:
+      - ip-db
+    networks:
+      - ip-net
+
+  ip-db:
+    image: mysql:8.0
+    container_name: ipam-ip-db
+    environment:
+      MYSQL_DATABASE: ip_db
+      MYSQL_ROOT_PASSWORD: root
+    volumes:
+      - ip-db-data:/var/lib/mysql
+    networks:
+      - ip-net
+
+volumes:
+  ip-db-data:
+
+networks:
+  ip-net:
