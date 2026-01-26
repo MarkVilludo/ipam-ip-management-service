@@ -15,7 +15,6 @@ class Activity extends SpatieActivity
         'causer_type',
         'causer_id',
         'properties',
-        'batch_uuid',
         'session_id',
         'user_email',
         'ip_address',
