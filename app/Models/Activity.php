@@ -23,7 +23,60 @@ class Activity extends SpatieActivity
 
     protected $casts = [
         'properties' => 'collection',
+        'created_at' => 'datetime',
+        'updated_at' => 'datetime',
     ];
+
+    /**
+     * Get all activities for a specific IP address (lifetime)
+     */
+    public static function forIpAddress($ipId)
+    {
+        return static::where('subject_type', 'App\Models\IpAddress')
+            ->where('subject_id', $ipId)
+            ->orderBy('created_at', 'desc');
+    }
+
+    /**
+     * Get all activities for a specific IP address within a session
+     */
+    public static function forIpAddressInSession($ipId, $sessionId)
+    {
+        return static::where('subject_type', 'App\Models\IpAddress')
+            ->where('subject_id', $ipId)
+            ->where('session_id', $sessionId)
+            ->orderBy('created_at', 'desc');
+    }
+
+    /**
+     * Get all activities for a specific user (lifetime)
+     */
+    public static function forUser($userId)
+    {
+        return static::where('causer_type', 'App\Models\User')
+            ->where('causer_id', $userId)
+            ->orderBy('created_at', 'desc');
+    }
+
+    /**
+     * Get all activities for a specific user within a session
+     */
+    public static function forUserInSession($userId, $sessionId)
+    {
+        return static::where('causer_type', 'App\Models\User')
+            ->where('causer_id', $userId)
+            ->where('session_id', $sessionId)
+            ->orderBy('created_at', 'desc');
+    }
+
+    /**
+     * Get login/logout events
+     */
+    public static function loginLogoutEvents()
+    {
+        return static::whereIn('event', ['login', 'logout'])
+            ->orderBy('created_at', 'desc');
+    }
 
     /**
      * Prevent deletion of audit logs

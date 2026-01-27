@@ -46,6 +46,11 @@ class AuditLogController extends Controller
             $query->where('event', $request->action);
         }
 
+        // Filter by event (alias for action)
+        if ($request->has('event')) {
+            $query->where('event', $request->event);
+        }
+
         // Filter by session ID
         if ($request->has('session_id')) {
             $query->where('session_id', $request->session_id);
@@ -76,7 +81,7 @@ class AuditLogController extends Controller
     }
 
     /**
-     * Get audit logs for a specific IP address
+     * Get audit logs for a specific IP address (entire lifetime)
      */
     public function getIpAddressLogs(Request $request, $ipId)
     {
@@ -89,20 +94,28 @@ class AuditLogController extends Controller
             ], 403);
         }
 
-        $logs = Activity::where('subject_type', 'App\Models\IpAddress')
+        $query = Activity::where('subject_type', 'App\Models\IpAddress')
             ->where('subject_id', $ipId)
-            ->with(['subject', 'causer'])
-            ->orderBy('created_at', 'desc')
-            ->get();
+            ->with(['subject', 'causer']);
+
+        // Filter by session if provided
+        if ($request->has('session_id')) {
+            $query->where('session_id', $request->session_id);
+        }
+
+        $logs = $query->orderBy('created_at', 'desc')->get();
 
         return response()->json([
             'success' => true,
-            'data' => $logs
+            'data' => $logs,
+            'ip_address_id' => $ipId,
+            'total_logs' => $logs->count(),
+            'filtered_by_session' => $request->has('session_id')
         ]);
     }
 
     /**
-     * Get audit logs for a specific user
+     * Get audit logs for a specific user (entire lifetime or by session)
      */
     public function getUserLogs(Request $request, $userId)
     {
@@ -115,15 +128,23 @@ class AuditLogController extends Controller
             ], 403);
         }
 
-        $logs = Activity::where('causer_id', $userId)
+        $query = Activity::where('causer_id', $userId)
             ->where('causer_type', 'App\Models\User')
-            ->with(['subject', 'causer'])
-            ->orderBy('created_at', 'desc')
-            ->get();
+            ->with(['subject', 'causer']);
+
+        // Filter by session if provided
+        if ($request->has('session_id')) {
+            $query->where('session_id', $request->session_id);
+        }
+
+        $logs = $query->orderBy('created_at', 'desc')->get();
 
         return response()->json([
             'success' => true,
-            'data' => $logs
+            'data' => $logs,
+            'user_id' => $userId,
+            'total_logs' => $logs->count(),
+            'filtered_by_session' => $request->has('session_id')
         ]);
     }
 
@@ -180,14 +201,42 @@ class AuditLogController extends Controller
                 ->pluck('count', 'subject_type'),
             'recent_logs' => Activity::with(['subject', 'causer'])
                 ->orderBy('created_at', 'desc')
-                ->limit(10)
-                ->get(),
+                ->limit(20)
+                ->get()
+                ->map(function ($log) {
+                    return [
+                        'id' => $log->id,
+                        'event' => $log->event,
+                        'description' => $log->description,
+                        'subject_type' => $log->subject_type,
+                        'subject_id' => $log->subject_id,
+                        'causer_id' => $log->causer_id,
+                        'user_email' => $log->user_email,
+                        'session_id' => $log->session_id,
+                        'ip_address' => $log->ip_address,
+                        'user_agent' => $log->user_agent,
+                        'created_at' => $log->created_at,
+                        'subject' => $log->subject,
+                        'causer' => $log->causer,
+                    ];
+                }),
             'logs_by_user' => Activity::select('causer_id', 'user_email', DB::raw('count(*) as count'))
                 ->where('causer_type', 'App\Models\User')
                 ->whereNotNull('causer_id')
                 ->groupBy('causer_id', 'user_email')
                 ->orderBy('count', 'desc')
                 ->limit(10)
+                ->get(),
+            'unique_sessions' => Activity::select('session_id', DB::raw('count(*) as count'))
+                ->whereNotNull('session_id')
+                ->groupBy('session_id')
+                ->orderBy('count', 'desc')
+                ->limit(10)
+                ->get(),
+            'login_logout_events' => Activity::whereIn('event', ['login', 'logout'])
+                ->with('causer')
+                ->orderBy('created_at', 'desc')
+                ->limit(20)
                 ->get(),
         ];
 

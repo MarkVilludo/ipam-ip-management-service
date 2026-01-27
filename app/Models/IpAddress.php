@@ -38,6 +38,7 @@ class IpAddress extends Model
     public function getActivitylogOptions(): LogOptions
     {
         return LogOptions::defaults()
+            ->useLogName('ip_address')
             ->logOnly(['ip_address', 'label', 'comment'])
             ->logOnlyDirty()
             ->dontSubmitEmptyLogs()
