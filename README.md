@@ -1,6 +1,8 @@
-# RMS - Backend
+# IP Management Service (IPAM)
 
-This project is an API built using Laravel. Below are instructions to set up the project locally using various development environments.
+IP address CRUD and audit-logging microservice for the IPAM system. It stores IP records (IPv4/IPv6, label, comment), enforces role-based rules (e.g. regular users can only edit their own IPs; super-admins can edit/delete any and access the audit dashboard), and maintains a non-deletable audit log of user actions (login/logout, IP create/update/delete) and session/user tracking. It accepts JWTs issued by the auth service and syncs user data from the token.
+
+**Purpose:** Central place for IP address data and audit history; the gateway routes `/api/ip-addresses` and `/api/audit-logs` here so the frontend can list, add, edit, delete IPs and (for super-admins) view the audit dashboard.
 
 ## Prerequisites
 
@@ -13,9 +15,7 @@ This project is an API built using Laravel. Below are instructions to set up the
 
 ## Local Setup
 
-You have multiple options for setting up the project locally. Choose the one that suits your environment best.
-
-### Option 1: Docker (recommended)
+### Docker (recommended)
 
 1. Ensure Docker is installed on your machine.
 2. Clone the repository:
@@ -53,7 +53,3 @@ You have multiple options for setting up the project locally. Choose the one tha
    ```
 9. Use postman collection to test the app.
    - TBA
-
-### Option 2: Laragon
-
-### Option 3: Herd
