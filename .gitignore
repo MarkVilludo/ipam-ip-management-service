@@ -1,0 +1,10 @@
+# Environment and secrets (do not commit)
+.env
+.env.backup
+.env.local
+.env.*.local
+.env.production
+
+# Laravel
+/site/vendor
+/site/node_modules
