@@ -40,16 +40,18 @@ class AuditEventController extends Controller
         $activity = null;
 
         try {
-            // Sync user so they exist in IP management service (same as SyncUserMiddleware)
-            // This fixes "User not found" when auth service logs login/logout before user has called any IP API
-            $user = User::updateOrCreate(
-                ['id' => $request->user_id],
+            $email = strtolower(trim($request->user_email));
+            // firstOrCreate: find by email first to avoid duplicate key; only insert when no row exists
+            $user = User::firstOrCreate(
+                ['email' => $email],
                 [
-                    'email' => $request->user_email,
+                    'id' => $request->user_id,
+                    'email' => $email,
                     'name' => $request->name ?? 'Unknown',
                     'role' => $request->role ?? 'user',
                 ]
             );
+            $user->update(['id' => $request->user_id, 'name' => $request->name ?? 'Unknown', 'role' => $request->role ?? 'user']);
 
             $event = in_array(strtolower($request->action), ['login', 'logout'])
                 ? strtolower($request->action)

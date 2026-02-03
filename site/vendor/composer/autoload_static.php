@@ -562,6 +562,7 @@ class ComposerStaticInitc514d8f7b9fc5970bdd94287905ef584
         'App\\Actions\\IpAddress\\ListIpAddressesAction' => __DIR__ . '/../..' . '/app/Actions/IpAddress/ListIpAddressesAction.php',
         'App\\Actions\\IpAddress\\ShowIpAddressAction' => __DIR__ . '/../..' . '/app/Actions/IpAddress/ShowIpAddressAction.php',
         'App\\Actions\\IpAddress\\UpdateIpAddressAction' => __DIR__ . '/../..' . '/app/Actions/IpAddress/UpdateIpAddressAction.php',
+        'App\\Auth\\JWTGuardAcceptExternal' => __DIR__ . '/../..' . '/app/Auth/JWTGuardAcceptExternal.php',
         'App\\Http\\Controllers\\AuditEventController' => __DIR__ . '/../..' . '/app/Http/Controllers/AuditEventController.php',
         'App\\Http\\Controllers\\AuditLogController' => __DIR__ . '/../..' . '/app/Http/Controllers/AuditLogController.php',
         'App\\Http\\Controllers\\Controller' => __DIR__ . '/../..' . '/app/Http/Controllers/Controller.php',

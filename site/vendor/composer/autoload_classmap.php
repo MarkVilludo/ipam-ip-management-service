@@ -11,6 +11,7 @@ return array(
     'App\\Actions\\IpAddress\\ListIpAddressesAction' => $baseDir . '/app/Actions/IpAddress/ListIpAddressesAction.php',
     'App\\Actions\\IpAddress\\ShowIpAddressAction' => $baseDir . '/app/Actions/IpAddress/ShowIpAddressAction.php',
     'App\\Actions\\IpAddress\\UpdateIpAddressAction' => $baseDir . '/app/Actions/IpAddress/UpdateIpAddressAction.php',
+    'App\\Auth\\JWTGuardAcceptExternal' => $baseDir . '/app/Auth/JWTGuardAcceptExternal.php',
     'App\\Http\\Controllers\\AuditEventController' => $baseDir . '/app/Http/Controllers/AuditEventController.php',
     'App\\Http\\Controllers\\AuditLogController' => $baseDir . '/app/Http/Controllers/AuditLogController.php',
     'App\\Http\\Controllers\\Controller' => $baseDir . '/app/Http/Controllers/Controller.php',

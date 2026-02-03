@@ -1,7 +1,8 @@
 <?php
 
 return [
-    'secret' => env('JWT_SECRET'),
+    // Prefer runtime env (e.g. Docker) so we use the same secret as the auth service
+    'secret' => getenv('JWT_SECRET') ?: env('JWT_SECRET'),
     'keys' => [
         'public' => env('JWT_PUBLIC_KEY'),
         'private' => env('JWT_PRIVATE_KEY'),

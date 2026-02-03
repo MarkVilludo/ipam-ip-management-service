@@ -1,7 +1,7 @@
 # version: "3.8"  the attribute `version` is obsolete, it will be ignored
 services:
     api:
-        container_name: translation-api
+        container_name: ip-management-service-api
         build:
             context: .
             dockerfile: ./docker/local/Dockerfile
@@ -19,13 +19,13 @@ services:
         depends_on:
             - database
     database:
-        container_name: database
+        container_name: ip-management-service-database
         image: mysql:8.0
         ports:
-            - 3308:3306
+            - 3309:3306
         environment:
-            - MYSQL_DATABASE=translation_management
-            - MYSQL_USER=rms_user
+            - MYSQL_DATABASE=ip_management_service
+            - MYSQL_USER=ip_management_service_user
             - MYSQL_PASSWORD=secret
             - MYSQL_ROOT_PASSWORD=secret
         volumes:
@@ -35,7 +35,7 @@ services:
 
     nginx:
         image: nginx:alpine
-        container_name: nginx
+        container_name: ip-management-service-nginx
         volumes:
             - ./docker/local/nginx/default.conf:/etc/nginx/conf.d/default.conf
             - ./docker/local/nginx/mkcert:/etc/nginx/mkcert
@@ -43,6 +43,7 @@ services:
         ports:
             - "80:80"
             - "443:443"
+            - "8444:443"
         networks:
             - api_network
         depends_on:
