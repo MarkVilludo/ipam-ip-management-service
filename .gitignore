@@ -5,6 +5,9 @@
 .env.*.local
 .env.production
 
+# PHPUnit
+site/.phpunit.result.cache
+
 # Laravel
 /site/vendor
 /site/node_modules

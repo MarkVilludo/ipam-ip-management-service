@@ -5,8 +5,9 @@ namespace App\Models;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Foundation\Auth\User as Authenticatable;
 use Illuminate\Notifications\Notifiable;
+use Tymon\JWTAuth\Contracts\JWTSubject;
 
-class User extends Authenticatable
+class User extends Authenticatable implements JWTSubject
 {
     use HasFactory, Notifiable;
 
@@ -16,6 +17,27 @@ class User extends Authenticatable
         'email',
         'role',
     ];
+
+    /**
+     * For testing: allow generating a JWT for this user so feature tests can call the API.
+     * In production, tokens are issued by the auth service.
+     */
+    public function getJWTIdentifier()
+    {
+        return $this->getKey();
+    }
+
+    /**
+     * @return array<string, mixed>
+     */
+    public function getJWTCustomClaims(): array
+    {
+        return [
+            'name' => $this->name,
+            'email' => $this->email,
+            'role' => $this->role ?? 'user',
+        ];
+    }
 
     protected $hidden = [];
 
